@@ -1,0 +1,73 @@
+package com.my.shiro.shiroUtils;
+
+
+import com.my.shiro.core.base.ShiroUser;
+import com.my.shiro.pojo.ShPermission;
+import com.my.shiro.pojo.ShUsers;
+import com.my.shiro.utils.BeanUtils;
+
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+
+import java.util.List;
+
+/**
+ * @author Gzy
+ * @version 1.0
+ * @Description
+ */
+public class SecurityUtils extends org.apache.shiro.SecurityUtils {
+
+    /**
+     * @Description 获取当前登录用户的ShiroUser对象(继承了用户类,用来封装数据)
+     * @return ShiroUser
+     */
+    public static ShiroUser getShiroUser(){
+        Subject subject = SecurityUtils.getSubject();
+        ShiroUser shiroUser = (ShiroUser)subject.getPrincipal();
+        return shiroUser;
+    }
+
+    /**
+     * @Description 获取当前登录用户类对象 ShUsers (用来进行持久化操作)
+     * @return ShUsers
+     */
+    public static ShUsers getShUsers(){
+        Subject subject = SecurityUtils.getSubject();
+        ShiroUser shiroUser = (ShiroUser)subject.getPrincipal();
+//        ShUsers shUsers = (ShUsers)BeanUtils.toBean(shiroUser, ShUsers.class);
+        ShUsers shUsers = new ShUsers();
+        BeanUtils.copyPropertiesIgnoreNull(shiroUser,shUsers);
+        return shUsers;
+    }
+
+    /**
+     * @Description: 获取当前登录用户的权限对象列表
+     * @return
+     */
+    public static List<ShPermission> getLoginUserPermissions(){
+        Subject subject = SecurityUtils.getSubject();
+        ShiroUser shiroUser = (ShiroUser)subject.getPrincipal();
+        List<ShPermission> permissionList = shiroUser.getPermissionList();
+        return permissionList;
+    }
+
+    /**
+     * @Description: 获取当前会话
+     * @return
+     */
+    public static Session getShiroSession(){
+        Subject subject = SecurityUtils.getSubject();
+        return subject.getSession();
+    }
+
+    /**
+     * @Description: 获取当前会话ID
+     * @return
+     */
+    public static String getShiroSessionId(){
+        Subject subject = SecurityUtils.getSubject();
+        return subject.getSession().getId().toString();
+    }
+
+}
